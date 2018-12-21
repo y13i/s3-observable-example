@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "scripts": {
+    "prestart": "tsc",
+    "start": "node dist"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.377.0",
+    "rxjs": "^6.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "prettier": "^1.15.3",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-config-standard": "^8.0.1",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.2.2"
+  }
+}
