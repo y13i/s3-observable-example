@@ -1,6 +1,6 @@
 import { S3 } from "aws-sdk";
 import { from } from "rxjs";
-import { mergeMap, tap, filter, count, map, scan } from "rxjs/operators";
+import { mergeMap, tap, filter, count, map, scan, take } from "rxjs/operators";
 
 import { listObjectsAsObservable } from "./listObjectsAsObservable";
 
@@ -119,7 +119,7 @@ async function main() {
   );
   console.log("\n");
 
-  console.log("example 3: another async request and scan");
+  console.log("example 3: another async request, take and scan");
   await listObjectsAsObservable(s3, {
     Bucket: bucket,
     Prefix: prefix,
@@ -136,6 +136,8 @@ async function main() {
         const number = parseInt(match[1]!);
         return number % 7 === 0;
       }),
+
+      take(7),
 
       mergeMap(object => {
         return s3.getObject({ Bucket: bucket, Key: object.Key! }).promise();
@@ -155,7 +157,7 @@ async function main() {
 
       tap(currentSum =>
         console.log(
-          `The current sum of values in objects with 7-divisible-timestamps is ${currentSum}`
+          `The current sum of values in the first 7 objects with 7-divisible-timestamps is ${currentSum}`
         )
       )
     )

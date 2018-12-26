@@ -7,26 +7,31 @@ export function listObjectsAsObservable(
   s3: S3,
   request: Request
 ): Observable<S3.ListObjectsV2Output> {
-  return Observable.create(async (observer: any) => {
+  return Observable.create((observer: any) => {
+    let finished = false;
     let continuationToken: string | undefined = undefined;
 
-    try {
-      do {
-        const req: Request = {
-          ...request,
-          ContinuationToken: continuationToken
-        };
+    (async () => {
+      try {
+        do {
+          const req: Request = {
+            ...request,
+            ContinuationToken: continuationToken
+          };
 
-        const result = await s3.listObjectsV2(req).promise();
+          const result = await s3.listObjectsV2(req).promise();
 
-        continuationToken = result.NextContinuationToken;
+          continuationToken = result.NextContinuationToken;
 
-        observer.next(result);
-      } while (continuationToken);
-    } catch (error) {
-      observer.error(error);
-    }
+          observer.next(result);
+        } while (continuationToken && !finished);
+      } catch (error) {
+        observer.error(error);
+      }
 
-    observer.complete();
+      observer.complete();
+    })();
+
+    return () => (finished = true);
   });
 }
